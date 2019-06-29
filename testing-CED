@@ -1,0 +1,8 @@
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+img = cv2.imread('image_to_read.png',0)
+edges = cv2.Canny(img,50,500)
+
+cv2.imwrite("canny.png", edges)
