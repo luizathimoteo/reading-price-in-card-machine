@@ -1,0 +1,76 @@
+import pyttsx3
+from PIL import Image
+import pytesseract
+import cv2
+import numpy as np
+
+
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"
+
+def pre_process_image():
+    originalImage = cv2.imread('image_to_read.png')
+    grayImage = cv2.cvtColor(originalImage, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite("teste_preto_e_branco.png", grayImage)
+
+    (thresh, blackAndWhiteImage) = cv2.threshold(grayImage, 127, 255, cv2.THRESH_BINARY)
+    cv2.imwrite("teste.png", blackAndWhiteImage)
+
+    img = cv2.imread("teste.png")
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    minLineLength = 100
+    maxLineGap = 10
+    lines = cv2.HoughLinesP(gray, 1, np.pi / 180, 100, minLineLength, maxLineGap)
+    for x1, y1, x2, y2 in lines[0]:
+        cv2.line(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    cv2.imwrite('houghlines.png', img)
+
+    img2 = cv2.imread('houghlines.png')
+    edges = cv2.Canny(gray, 50, 150, apertureSize=3)
+    cv2.imwrite('canny.png', edges)
+
+    return "canny.png"
+
+def read(text):
+    engine = pyttsx3.init()
+
+    engine.say(text)
+
+    engine.runAndWait()
+
+def find_start(text):
+    words = ["valor", "rs", "r$","valor: rs","valor: r$","valor de compra","credito","debito"]
+
+    for word in words:
+        b = text.find(word)
+
+        if b != -1:
+            return b
+
+    return -1
+
+print(pytesseract.image_to_string(Image.open(pre_process_image())))
+
+text = pytesseract.image_to_string(Image.open(pre_process_image()))
+
+text = text.lower()
+
+text = text.replace(".", ",")
+
+text_select1 = find_start(text)
+
+if text_select1 == -1:
+    read("Valor não encontrado")
+
+    exit()
+
+text_select2 = text[text_select1:]
+
+text_select3 = text_select2.find(',')
+
+text_select4 = text_select3 + 3
+
+text_select5 = text_select2[0:text_select4]
+
+final_text = text_select5.split(",")[0] + " reais " + "e " + text_select5.split(",")[1] + " centavos"
+
+read(final_text)
