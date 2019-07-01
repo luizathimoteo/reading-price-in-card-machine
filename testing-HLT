@@ -1,7 +1,21 @@
 import cv2
 import numpy as np
 
-img = cv2.imread('image_to_read.png')
+def pre_process_image():
+    originalImage = cv2.imread('image_to_read.png')
+
+    grayImage = cv2.cvtColor(originalImage, cv2.COLOR_BGR2GRAY)
+
+    cv2.imwrite("teste_preto_e_branco.png", grayImage)
+
+    (thresh, blackAndWhiteImage) = cv2.threshold(
+        grayImage, 127, 255, cv2.THRESH_BINARY)
+
+    cv2.imwrite("teste.png", blackAndWhiteImage)
+
+    return "teste.png"
+
+img = cv2.imread(pre_process_image())
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 edges = cv2.Canny(gray,50,150,apertureSize = 3)
 minLineLength = 100
