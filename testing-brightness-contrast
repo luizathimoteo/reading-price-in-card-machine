@@ -3,7 +3,7 @@ import numpy as np
 
 img = cv2.imread('image_to_read.png')
 
-s = 128
+s = 2500
 img = cv2.resize(img, (s,s), 0, 0, cv2.INTER_AREA)
 
 def apply_brightness_contrast(input_img, brightness = 0, contrast = 0):
@@ -58,3 +58,8 @@ for i, b in enumerate(blist):
     cv2.putText(out, 'OpenCV',(260,30), font, 1.0, fcolor,2,cv2.LINE_AA)
 
 cv2.imwrite('out.png', out)
+
+originalImage = cv2.imread('out.png')
+grayImage = cv2.cvtColor(originalImage, cv2.COLOR_BGR2GRAY)
+
+cv2.imwrite("teste_preto_e_branco.png", grayImage)
