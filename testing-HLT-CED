@@ -1,0 +1,23 @@
+import cv2
+import numpy as np
+
+
+originalImage = cv2.imread('image_to_read.png')
+grayImage = cv2.cvtColor(originalImage, cv2.COLOR_BGR2GRAY)
+cv2.imwrite("teste_preto_e_branco.png", grayImage)
+
+(thresh, blackAndWhiteImage) = cv2.threshold(grayImage, 127, 255, cv2.THRESH_BINARY)
+cv2.imwrite("teste.png", blackAndWhiteImage)
+
+img = cv2.imread("teste.png")
+gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+minLineLength = 100
+maxLineGap = 10
+lines = cv2.HoughLinesP(gray,1,np.pi/180,100,minLineLength,maxLineGap)
+for x1,y1,x2,y2 in lines[0]:
+    cv2.line(img,(x1,y1),(x2,y2),(0,255,0),2)
+cv2.imwrite('houghlines.png',img)
+
+img2 = cv2.imread('houghlines.png')
+edges = cv2.Canny(gray,50,150,apertureSize = 3)
+cv2.imwrite('canny.png',edges)
